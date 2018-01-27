@@ -1,0 +1,50 @@
+#!/usr/bin/env python
+#za pokretanje bez puthon
+
+# pitati kako sa folderom posto gzip ipak to radi
+# gde dictionary,spojeno sa fajlom ili i dalje odvojeno
+# pitati kako da saljem projekat sa potrebnim bibliotekama
+# kako da cuvam dictionary? bin 3x vise zauzme a txt parsiram str pa moze biti greska
+from functions import *
+
+def compress(inFilename,zipFilename):
+    d = readFromFile(inFilename)
+    dictionary = makeLZ77Dictionary(d)      #vraca listu slogova
+    dictionary = makeDictionary(dictionary) #pravi dictionary od slogova
+    # printDictionary(dictionary)
+    dictionary = countWords(d,dictionary)   #broji koliko ima ponavljanja
+    sortDictionary(dictionary)              #sortira na osnovu broja ponavljanja
+    makeHuffmanCodes(dictionary)            #pravi huffman stablo za sortiran dictionary
+    # printDictionary(dictionary)
+    s = LZ77compress(d,dictionary)          #kompresovan kod
+    writeCodeToFile(zipFilename,s)          #upisivanje koda u file
+    writeDictionaryToFile(dictionary)       #upisivanje recnika u file
+    return 0 
+
+#ONLY HUFFMAN CODE ALGORITHM
+    # d = readFromFile(inFilename)
+    # dictionary = makeDictionary(d)
+    # sortDictionary(dictionary)
+    # makeHuffmanCodes(dictionary)
+    # # printDictionary(dictionary)
+    # gz = huffmanCompression(dictionary,d)
+    # s = arrayToStr(gz)
+    # writeDictionaryToFile(dictionary)
+    # writeCodeToFile(zipFilename,s)
+
+if __name__ == "__main__":
+    emptyDictionaryFile()
+
+    if len(sys.argv) == 3:
+        compress(sys.argv[1],sys.argv[2])
+    elif len(sys.argv) == 4:
+        if not os.path.exists(sys.argv[3]):
+            # print("MAKE")
+            os.makedirs(sys.argv[3])
+        if sys.argv[1] != "-d":
+            print("GRESKA")
+        for file in os.listdir(sys.argv[2]):
+            # print(sys.argv[2]+"/"+file)
+            compress(sys.argv[2]+"/"+file,sys.argv[3]+"/"+sys.argv[2]+file+".gzip")
+    else:
+        print("GRESKA")
