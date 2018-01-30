@@ -83,7 +83,6 @@ def LZ77compress(dd,dictionary):
                 break
     return s
 
-
 def makeWords(dd,dictionary):
     words = []
     d = ''
