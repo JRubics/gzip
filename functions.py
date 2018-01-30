@@ -1,28 +1,13 @@
-import pickle
+# import pickle
 import sys
 import os
-import tarfile
-import numpy as np
 from pathlib import Path    #za proveru da li postoji ulazni file
 from codeDecompress import CodeU
 from code import Code
 
-# def countWords(d,dictionary):
-#     min = len(dictionary[0].codeStr)
-#     for i in range(1,len(dictionary)):
-#         if len(dictionary[i].codeStr) < min:
-#             min =  len(dictionary[i].codeStr)
-#     print(min)
-#     for i in range(0,len(dictionary)):
-#         for j in range(0,len(d)):
-#             for k in range(0,min/2):
-#                 k = k
-#     return dictionary
-
 def decompressLZ77Codes(d,dictionary,max,unzipFilename):
     s = ''
     i = 0
-    # print(len(dictionary))
     decompressed = ''
     while i < len(d):
         a = d[i]
@@ -32,33 +17,26 @@ def decompressLZ77Codes(d,dictionary,max,unzipFilename):
                 break
             a += d[i]
             i += 1
-        # print(a)
         i+=1
         s = ''
         while d[i]!= ';':
-            # print(d[i])
             if i == len(d):
                 break
             s+=d[i]
             i += 1
-        # print(a,s)
         decompressed += translateLZ77(a,s,dictionary)
         i += 1
     return decompressed
 
-def translateLZ77(a,s,dictionary): # W T F
+def translateLZ77(a,s,dictionary):
     translated = ''
     for i in range(0,len(dictionary)):
-        # print("a = ",a, "  d = ",dictionary[i].binCode)
         if a == dictionary[i].binCode:
-            # print(dictionary[i].codeStr)
             for j in range(0,int(s)):
-                translated += dictionary[i].codeStr[j]  
-    # print(translated)
+                translated += dictionary[i].codeStr[j]
     return translated
 
-def decompressLZ77dictionary():
-    d = readFromFile("dictionary")
+def decompressLZ77dictionary(d):
     i = 0
     k = 0
     dictionary = []
@@ -70,17 +48,9 @@ def decompressLZ77dictionary():
                 break
             a += d[i]
             i += 1
-        # print(a)
-        # if d[i]=='=' and d[i+1] != '0' and d[i+1]!='1':
-        #     # print(d[i+1]);
-        #     i += 1
-        #     while d[i] != '=':
-        #         print(d[i]);
-        #         i+=1
         i+=1
         s = ''
         while d[i]!= ',':
-            # print(d[i])
             if d[i] == '|':
                 break
             s+=d[i]
@@ -90,14 +60,14 @@ def decompressLZ77dictionary():
         i += 1
     return dictionary
 
-def countWords(dd,dictionary): 
+def countWords(dd,dictionary):
     words = makeWords(dd,dictionary)
     for i in range(0,len(words)):
         for j in range(0,len(dictionary)):
             if words[i] == dictionary[j].codeStr[0:len(words[i])]:
                 dictionary[j].counter += 1
                 break
- 
+
     for j in range(0,len(dictionary)): #zato sto je u startu 1
         dictionary[j].counter -= 1
     return dictionary
@@ -110,7 +80,6 @@ def LZ77compress(dd,dictionary):
             if words[i] == dictionary[j].codeStr[0:len(words[i])]:
                 s = s + str(bin(dictionary[j].binCode))[2:] + '=' + str(len(words[i])) + ";"
                 break
-    # print(s)
     return s
 
 
@@ -134,23 +103,20 @@ def makeWords(dd,dictionary):
     words[len(words)-1] += d[len(d)-1]
     return words
 
-def makeLZ77Dictionary(d): #PROVERI
+def makeLZ77Dictionary(d): 
     dictionary = list()
     found = False
     add = False
     F = d[0]
     dictionary.append(F)
-    helpD = [] #ovde se prebaci samo ono sto treba
-    # print(len(d))
-    for i in range(1,len(d)):
-        for s in range(0,len(dictionary)):
-            # print("1")
+    helpD = set() #ovde se prebaci samo ono sto treba
+    for i in range(1, len(d)):
+        for s in range(0, len(dictionary)):
             if dictionary[s][0]== d[i]:
-                # print("2")
                 F = ''
         pom = F + d[i]
-        for j in range(0,len(dictionary)):
-            for k in range(0,len(dictionary[j])):
+        for j in range(0, len(dictionary)):
+            for k in range(0, len(dictionary[j])):
                 if pom[k] == dictionary[j][k]:
                     continue
                 else:
@@ -160,35 +126,20 @@ def makeLZ77Dictionary(d): #PROVERI
                 found = False
                 F = pom
             break
-    for i in range(0,len(dictionary)): #pravi listu za brisanje(zbog onog out of range u for brisanju)
-        for j in range(0,len(dictionary)):#proveri sledeci red za len+-1
-            if i == j:
-                continue
-            if len(dictionary[i]) > len(dictionary[j]) and dictionary[i][0:len(dictionary[j])] == dictionary[j]:
-                # print(dictionary[j])
-                helpD.append(dictionary[j])
-
-    helpD = set(helpD)
+    dictionary = list(set(dictionary))
+    dictionary.sort(key=len, reverse=True)
+    for i in range(0,len(dictionary) - 1): #pravi listu za brisanje(zbog onog out of range u for brisanju)
+        for j in range(i + 1, len(dictionary)):
+            if len(dictionary[i]) > len(dictionary[j]) and dictionary[i].find(dictionary[j]) == 0:
+                helpD.add(dictionary[j])
     dictionary = [x for x in dictionary if x not in helpD]
-    # for i in range(0,len(helpD)): #brisanje
-        # while existsInList(helpD[i],dictionary):
-        #     print(f'while {a}')
-        #     a += 1
-        #     dictionary.remove(helpD[i])
-    dictionary = set(dictionary)    #unique
-    dictionary = list(dictionary)
     return dictionary
 
 def existsInList(x,dictionary):
-    # exists = False
     if x in dictionary:
         return True
     else:
         return False
-    # for i in range(0,len(dictionary)):
-    #     if x == dictionary[i]:
-    #         exists = True
-    # return exists
 
 def findNextLZ77(d,s,i):
     s = s + d[i]
@@ -200,13 +151,12 @@ def findNextLZ77(d,s,i):
 
 def printArray(d):
     for i in range(0,len(d)):
-        print(d[i])
+        sys.stdout.write(d[i])
+    sys.stdout.flush()
     return 0
 
 def decompressHuffmanCodes(d,dictionary,max,filename):
     s = ''
-    # printArray(d)
-    # printDecompressedDictionary(dictionary)
     for k in range(0,len(d)):
         if d[k] == '0':
             s += d[k]
@@ -228,42 +178,14 @@ def translateHuffmanCode(s,dictionary,filename):
 
 def printDecompressedDictionary(dictionary):
     for i in range(0,len(dictionary)):
-        print(dictionary[i].codeStr," code = ",dictionary[i].binCode)        
+        print(dictionary[i].codeStr," code = ",dictionary[i].binCode)
 
-def decompressDictionary():
-    d = readFromFile("dictionary")
-    i = 0
-    k = 0
-    dictionary = []
-    for i in range(0,len(d)):
-        a = d[i]
-        if d[i] == '|':
-            break
-        if d[i+1] == '=':
-            j = i + 2
-            s = d[j]
-            j += 1
-            while d[j] != ',':
-                if d[j] == '|':
-                    break
-                s = s + d[j]
-                j += 1
-            #print(a," ",s)
-            i = j-1
-            c = CodeU(a,s)
-            dictionary.append(c)
-        i += 1
-    return dictionary
-
-def emptyDictionaryFile():
-    newFile = open("dictionary", "w")
+def emptyFile(zipFilename):
+    newFile = open(zipFilename, "w")
     newFile.close()
 
-def writeDictionaryToFile(dictionary):
-    newFile = open("dictionary", "a")
-    #
-    # pickle.dump(dictionary, open("dictionary", "wb"))
-
+def writeDictionaryToFile(zipFilename,dictionary):
+    newFile = open(zipFilename, "a")
     s = "%s=%s" %(dictionary[0].codeStr, bin(dictionary[0].binCode)[2:])
     newFile.write(s)
     for i in range(1,len(dictionary)):
@@ -275,7 +197,7 @@ def writeDictionaryToFile(dictionary):
     return 0
 
 def writeCodeToFile(filename,s):
-    newFile = open(filename, "w")
+    newFile = open(filename, "a")
     newFile.write(s)
     newFile.close()
     return 0
@@ -305,8 +227,24 @@ def huffmanCompression(dicionary,d):
         for j in range(0,len(dicionary)):
             if d[i] == dicionary[j].codeStr:
                 gzip.append(dicionary[j].binCode)
-                #print(bin(gzip[i]))
     return gzip
+
+def readDictionary(zipFilename):
+    d = readFromFile(zipFilename)
+    for i in range(0,len(d)):
+        if d[i] == "|":
+            d = d[:i+1]
+            # printArray(d)
+            return d
+
+def readContext(zipFilename):
+    d = readFromFile(zipFilename)
+    for i in range(0,len(d)):
+        if d[i] == "|":
+            d = d[i+1:]
+            # printArray(d)
+            return d
+
 
 def makeHuffmanCodes(dictionary):
     dictionary[0].binCode = 0b0
@@ -382,7 +320,7 @@ def readZip(filename):
     my_file = Path(filename)
     a = ''
     if my_file.is_file():
-        try: 
+        try:
             with open(filename) as f:
                 while True:
                     c = f.read(1)
@@ -394,17 +332,6 @@ def readZip(filename):
     else:
         print("Can not open a file")
         exit(0)
-    # for i in range (0,len(readList)):
-    #     # print(readList[i])
-    #     if (readList[i] == 'b' and readList[i+1] == '\'') or (readList[i-1] == 'b' and readList[i] == '\''):
-    #         continue
-    #     if (readList[i] == '\'' and readList[i+1] == '='):
-    #         continue
-    #     if(readList[i-1] == '\'' and readList[i] == '='):
-    #         newlist.append('=')
-    #         continue
-    #     else:
-    #         newlist.append(readList[i])
     return newlist
 
 def readFromFile(filename):
@@ -413,44 +340,16 @@ def readFromFile(filename):
     my_file = Path(filename)
     a = ''
     if my_file.is_file():
-        try: 
-            # with open(filename) as f:
-            #     while True:
-            #         c = f.read(1)
-            #         if not c:
-            #             break
-            #         readList.append(c)
-
+        try:
             with open(filename, mode='rb') as file:
                 a = file.read()
                 file.close()
-                # print(a)
             string = a.decode('utf-8')
-            # print(string)
 
         finally:
-            # f.close()
             for i in range(0,len(string)):
                 readList.append(string[i])
-            # print(readList)
             return readList
     else:
         print("Can not open a file")
         exit(0)
-
-# def writeArrayToFile(filename,inputStr):
-#     inputStr = np.array(inputStr)
-#     newFile = open(filename, "wb")
-#     newFile.write(inputStr)
-#     return 0
-
- # with open(filename, mode='rb') as file: # b is important -> binary
-            #     a = file.read()
-            #     file.close()
-            # print(a)
-            # f = open(filename, "rb")
-            # byte = f.read(1)
-            # while byte != b"":
-            #     #print(byte)
-            #     readList.append(byte)
-            #     byte = f.read(1)

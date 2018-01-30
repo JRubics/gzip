@@ -2,11 +2,10 @@
 from functions import *
 
 def decompress(zipFilename,unzipFilename):
-    d = readFromFile(zipFilename)               #ucitavanje recnika
-    dictionary = decompressLZ77dictionary()     #pravljenje recnika(kao strukture)
-    for i in range(0,len(dictionary)):
-        # print(dictionary[i].binCode)
-        i = i
+    emptyFile(unzipFilename)
+    d = readContext(zipFilename)               #ucitavanje fajla
+    dictionary = readDictionary(zipFilename)        #ucitava dictionary
+    dictionary = decompressLZ77dictionary(dictionary)     #pravljenje recnika(kao strukture)
     s = decompressLZ77Codes(d,dictionary,dictionary[len(dictionary)-1].binCode,unzipFilename) #dekompresija glavnog dela
     writeCodeToFile(unzipFilename,s)            #ispis glavnog dela u file
     return 0
@@ -14,10 +13,3 @@ def decompress(zipFilename,unzipFilename):
 
 if __name__ == "__main__":
     decompress(sys.argv[1],sys.argv[2])
-
- # d = readFromFile(zipFilename)
-    # printArray(d)
-    # dictionary = decompressDictionary()
-    # # printDictionary(dictionary)
-    # codes = decompressHuffmanCodes(d,dictionary,dictionary[len(dictionary)-1].binCode,unzipFilename)
-    
