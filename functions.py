@@ -1,6 +1,7 @@
 # import pickle
 import sys
 import os
+import shutil
 from pathlib import Path    #za proveru da li postoji ulazni file
 from codeDecompress import CodeU
 from code import Code

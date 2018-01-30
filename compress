@@ -17,16 +17,27 @@ def compress(inFilename,zipFilename):
     
     return 0 
 
+def compressFolder(inFolder,zipFolder,file):
+    os.makedirs(zipFolder + "/" + file)
+    for file1 in os.listdir(inFolder + "/" + file):
+        if os.path.isfile(inFolder + "/" + file+ "/" + file1):
+            compress(inFolder + "/" + file+ "/" + file1,zipFolder + "/" + file+ "/" + file1+".gzip")
+        else: 
+            compressFolder(inFolder + "/" + file,zipFolder + "/" + file,file1)
+
 if __name__ == "__main__":
     if len(sys.argv) == 3:
         compress(sys.argv[1],sys.argv[2])
     elif len(sys.argv) == 4:
-        if not os.path.exists(sys.argv[3]):
-            os.makedirs(sys.argv[3])
         if sys.argv[1] != "-d":
             print("GRESKA")
+        if os.path.exists(sys.argv[3]):
+            shutil.rmtree(sys.argv[3], ignore_errors=False, onerror=None)
+        os.makedirs(sys.argv[3])
         for file in os.listdir(sys.argv[2]):
-            # print(sys.argv[2]+"/"+file)
-            compress(sys.argv[2]+"/"+file,sys.argv[3]+"/"+file+".gzip")
+            if os.path.isfile(sys.argv[2]+"/"+file):
+                compress(sys.argv[2]+"/"+file,sys.argv[3]+"/"+file+".gzip")
+            else: 
+                compressFolder(sys.argv[2],sys.argv[3],file)
     else:
         print("GRESKA")
