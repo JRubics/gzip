@@ -73,6 +73,11 @@ def countWords(dd,dictionary):
         dictionary[j].counter -= 1
     return dictionary
 
+def checkSize(inFilename, zipFilename):
+    if os.path.getsize(inFilename) < os.path.getsize(zipFilename):
+        print("Nije moguca kompresija fajla: ",inFilename)
+        print("Izlazni file je veci nego ulazni zato sto je ulazni previse mali da bi imao dovoljno ponavljanja.")
+
 def LZ78compress(dd,dictionary):
     words = makeWords(dd,dictionary)
     s = ''
@@ -330,7 +335,7 @@ def readZip(filename):
         finally:
             f.close()
     else:
-        print("Can not open a file")
+        print("File ne moze da se otvori")
         exit(0)
     return newlist
 
@@ -351,5 +356,5 @@ def readFromFile(filename):
                 readList.append(string[i])
             return readList
     else:
-        print("Can not open a file")
+        print("File ne moze da se otvori")
         exit(0)

@@ -14,6 +14,7 @@ def compress(inFilename,zipFilename):
     s = LZ78compress(d,dictionary)          #kompresovan kod
     writeDictionaryToFile(zipFilename,dictionary)       #upisivanje recnika u file
     writeCodeToFile(zipFilename,s)          #upisivanje koda u file
+    checkSize(inFilename, zipFilename)      #proverava uspesnost kompresije
     return 0 
 
 def compressFolder(inFolder,zipFolder,file):
