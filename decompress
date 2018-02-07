@@ -3,10 +3,10 @@ from functions import *
 
 def decompress(zipFilename,unzipFilename):
     emptyFile(unzipFilename)
-    d = readContext(zipFilename)               #ucitavanje fajla
-    dictionary = readDictionary(zipFilename)        #ucitava dictionary
-    dictionary = decompressLZ77dictionary(dictionary)     #pravljenje recnika(kao strukture)
-    s = decompressLZ77Codes(d,dictionary,dictionary[len(dictionary)-1].binCode,unzipFilename) #dekompresija glavnog dela
+    d = readContext(zipFilename)                        #ucitavanje fajla
+    dictionary = readDictionary(zipFilename)            #ucitava dictionary
+    dictionary = decompressLZ78dictionary(dictionary)     #pravljenje recnika(kao strukture)
+    s = decompressLZ78Codes(d,dictionary,dictionary[len(dictionary)-1].binCode,unzipFilename) #dekompresija glavnog dela
     writeCodeToFile(unzipFilename,s)            #ispis glavnog dela u file
     return 0
 

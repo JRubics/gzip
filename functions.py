@@ -6,7 +6,7 @@ from pathlib import Path    #za proveru da li postoji ulazni file
 from codeDecompress import CodeU
 from code import Code
 
-def decompressLZ77Codes(d,dictionary,max,unzipFilename):
+def decompressLZ78Codes(d,dictionary,max,unzipFilename):
     s = ''
     i = 0
     decompressed = ''
@@ -25,11 +25,11 @@ def decompressLZ77Codes(d,dictionary,max,unzipFilename):
                 break
             s+=d[i]
             i += 1
-        decompressed += translateLZ77(a,s,dictionary)
+        decompressed += translateLZ78(a,s,dictionary)
         i += 1
     return decompressed
 
-def translateLZ77(a,s,dictionary):
+def translateLZ78(a,s,dictionary):
     translated = ''
     for i in range(0,len(dictionary)):
         if a == dictionary[i].binCode:
@@ -37,7 +37,7 @@ def translateLZ77(a,s,dictionary):
                 translated += dictionary[i].codeStr[j]
     return translated
 
-def decompressLZ77dictionary(d):
+def decompressLZ78dictionary(d):
     i = 0
     k = 0
     dictionary = []
@@ -73,7 +73,7 @@ def countWords(dd,dictionary):
         dictionary[j].counter -= 1
     return dictionary
 
-def LZ77compress(dd,dictionary):
+def LZ78compress(dd,dictionary):
     words = makeWords(dd,dictionary)
     s = ''
     for i in range(0,len(words)):
@@ -103,7 +103,7 @@ def makeWords(dd,dictionary):
     words[len(words)-1] += d[len(d)-1]
     return words
 
-def makeLZ77Dictionary(d): 
+def makeLZ78Dictionary(d): 
     dictionary = list()
     found = False
     add = False
@@ -141,7 +141,7 @@ def existsInList(x,dictionary):
     else:
         return False
 
-def findNextLZ77(d,s,i):
+def findNextLZ78(d,s,i):
     s = s + d[i]
     print(s)
     for j in range(i+1,len(d)):

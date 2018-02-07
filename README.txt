@@ -1,5 +1,3 @@
-Izbacila sam sve biblioteke koje bi trebale posebno da se instaliraju i verovatno mi neće ni trebati.
-
 pokretanje:
 prebaciti path na trenutni direktorijum - export PATH=$PATH":." ili pozivati sa ./compress...
 

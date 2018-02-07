@@ -5,13 +5,13 @@ from functions import *
 
 def compress(inFilename,zipFilename):
     emptyFile(zipFilename)
-    d = readFromFile(inFilename)
-    dictionary = makeLZ77Dictionary(d)      #vraca listu slogova
+    d = readFromFile(inFilename)            #preuzima sadrzaj fajla
+    dictionary = makeLZ78Dictionary(d)      #vraca listu slogova
     dictionary = makeDictionary(dictionary) #pravi dictionary od slogova
     dictionary = countWords(d,dictionary)   #broji koliko ima ponavljanja
     sortDictionary(dictionary)              #sortira na osnovu broja ponavljanja
     makeHuffmanCodes(dictionary)            #pravi huffman stablo za sortiran dictionary
-    s = LZ77compress(d,dictionary)          #kompresovan kod
+    s = LZ78compress(d,dictionary)          #kompresovan kod
     writeDictionaryToFile(zipFilename,dictionary)       #upisivanje recnika u file
     writeCodeToFile(zipFilename,s)          #upisivanje koda u file
     return 0 
